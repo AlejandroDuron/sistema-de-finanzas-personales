@@ -58,7 +58,7 @@ export default function Login() {
   return (
     <>
       <Head>
-        <title>Mi Finanzas - Iniciar sesión</title>
+        <title>Mis Finanzas - Iniciar sesión</title>
       </Head>
 
       <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-background-light font-display text-slate-900 lg:flex-row">
