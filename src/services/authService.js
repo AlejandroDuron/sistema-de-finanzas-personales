@@ -31,7 +31,11 @@ export function login(email, password) {
   }
 
   const safeUser = sanitizeUser(user)
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(safeUser))
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(safeUser))
+  } catch (error) {
+    return null
+  }
   return safeUser
 }
 
@@ -40,7 +44,11 @@ export function logout() {
     return
   }
 
-  localStorage.removeItem(STORAGE_KEY)
+  try {
+    localStorage.removeItem(STORAGE_KEY)
+  } catch (error) {
+    return
+  }
 }
 
 export function getSession() {
@@ -48,7 +56,13 @@ export function getSession() {
     return null
   }
 
-  const sessionRaw = localStorage.getItem(STORAGE_KEY)
+  let sessionRaw = null
+
+  try {
+    sessionRaw = localStorage.getItem(STORAGE_KEY)
+  } catch (error) {
+    return null
+  }
 
   if (!sessionRaw) {
     return null

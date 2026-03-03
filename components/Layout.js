@@ -38,7 +38,7 @@ export default function Layout({ children, title = 'Mi Finanzas' }) {
               <span className="material-symbols-outlined">payments</span>
             </div>
             <div className="flex flex-col">
-              <h1 className="text-slate-900 text-base font-bold leading-none">Mi Finanzas</h1>
+              <h1 className="text-slate-900 text-base font-bold leading-none">Mis Finanzas</h1>
               <p className="text-slate-500 text-xs font-medium">Plan Personal</p>
             </div>
           </div>
