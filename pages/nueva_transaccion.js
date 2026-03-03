@@ -16,7 +16,23 @@ export default function NuevaTransaccion() {
   const handleSubmit = (e) => {
     e.preventDefault()
     const finalAmount = type === 'expense' ? -Math.abs(parseFloat(amount || 0)) : Math.abs(parseFloat(amount || 0))
-    addTransaction({ description, amount: finalAmount, accountId })
+    
+    // Buscar el nombre de la cuenta para que se vea bien en la tabla
+    const accountNames = {
+      'main': 'Nómina Principal',
+      'savings': 'Ahorros Digitales',
+      'cash': 'Efectivo'
+    }
+
+    addTransaction({ 
+      description, 
+      amount: finalAmount, 
+      accountName: accountNames[accountId] || 'Efectivo',
+      date: new Date(date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }),
+      category: category === 'food' ? 'Alimentación' : category === 'savings' ? 'Ahorros' : category === 'salary' ? 'Salario' : category === 'leisure' ? 'Ocio' : category === 'transport' ? 'Transporte' : 'Otros',
+      icon: category === 'food' ? 'restaurant' : category === 'savings' ? 'account_balance_wallet' : category === 'salary' ? 'work' : category === 'leisure' ? 'videogame_asset' : category === 'transport' ? 'directions_car' : 'payments',
+      categoryColor: category === 'salary' ? 'green' : category === 'food' ? 'orange' : category === 'savings' ? 'blue' : category === 'leisure' ? 'purple' : category === 'transport' ? 'amber' : 'slate'
+    })
     router.push('/transacciones')
   }
 

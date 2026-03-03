@@ -92,13 +92,9 @@ function Presupuestos() {
         </div>
 
         {/* Empty State Suggestion */}
-        <div className="mt-12 p-8 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center text-center">
+        <div className="mt-4 p-1 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center text-center">
           <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">
-            <span className="material-symbols-outlined text-slate-400 text-3xl">lightbulb</span>
           </div>
-          <h4 className="font-bold text-slate-900">¿Necesitas ayuda con tus ahorros?</h4>
-          <p className="text-slate-500 text-sm max-w-sm mt-2">Prueba nuestra herramienta de auto-presupuesto basada en tus gastos del mes anterior.</p>
-          <button className="mt-4 text-primary font-bold text-sm hover:underline">Sugerir presupuesto inteligente</button>
         </div>
       </div>
     </Layout>

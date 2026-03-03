@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Link from 'next/link'
 import Layout from '../components/Layout'
 import { useStore } from '../store/useStore'
@@ -5,15 +6,13 @@ import withAuth from '../src/guards/withAuth'
 
 function Transacciones() {
   const { transactions } = useStore()
+  const [filter, setFilter] = useState('Todos')
 
-  const sampleTransactions = [
-    { id: 1, date: '24 Oct 2023', description: 'Suscripción Netflix', icon: 'movie', category: 'Entretenimiento', categoryColor: 'purple', account: 'Visa Débito (...4421)', amount: -15.99 },
-    { id: 2, date: '23 Oct 2023', description: 'Depósito Nómina Acme Inc.', icon: 'work', category: 'Salario', categoryColor: 'green', account: 'Cuenta Corriente', amount: 2500.00 },
-    { id: 3, date: '22 Oct 2023', description: 'Supermercado Central', icon: 'shopping_cart', category: 'Alimentación', categoryColor: 'amber', account: 'Efectivo', amount: -85.40 },
-    { id: 4, date: '21 Oct 2023', description: 'Pago Gimnasio Power', icon: 'fitness_center', category: 'Salud', categoryColor: 'blue', account: 'Visa Débito (...4421)', amount: -45.00 },
-    { id: 5, date: '20 Oct 2023', description: 'Transferencia Bizum Recibida', icon: 'swap_horiz', category: 'Otros', categoryColor: 'slate', account: 'Cuenta Corriente', amount: 20.00 },
-    { id: 6, date: '19 Oct 2023', description: 'Cena Restaurante El Olivo', icon: 'restaurant', category: 'Restauración', categoryColor: 'orange', account: 'Efectivo', amount: -32.50 },
-  ]
+  const filteredTransactions = transactions.filter(tx => {
+    if (filter === 'Ingresos') return tx.amount > 0
+    if (filter === 'Gastos') return tx.amount < 0
+    return true
+  })
 
   const getCategoryClasses = (color) => {
     const colors = {
@@ -54,9 +53,24 @@ function Transacciones() {
         {/* Tabs & Filters */}
         <div className="flex flex-col md:flex-row justify-between items-end gap-4 border-b border-slate-200">
           <div className="flex gap-8">
-            <button className="pb-4 border-b-2 border-primary text-primary text-sm font-bold">Todos</button>
-            <button className="pb-4 border-b-2 border-transparent text-slate-500 hover:text-slate-700 text-sm font-bold transition-colors">Ingresos</button>
-            <button className="pb-4 border-b-2 border-transparent text-slate-500 hover:text-slate-700 text-sm font-bold transition-colors">Gastos</button>
+            <button 
+              onClick={() => setFilter('Todos')}
+              className={`pb-4 border-b-2 text-sm font-bold transition-colors ${filter === 'Todos' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+            >
+              Todos
+            </button>
+            <button 
+              onClick={() => setFilter('Ingresos')}
+              className={`pb-4 border-b-2 text-sm font-bold transition-colors ${filter === 'Ingresos' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+            >
+              Ingresos
+            </button>
+            <button 
+              onClick={() => setFilter('Gastos')}
+              className={`pb-4 border-b-2 text-sm font-bold transition-colors ${filter === 'Gastos' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+            >
+              Gastos
+            </button>
           </div>
           <div className="flex items-center gap-4 pb-3">
             <div className="relative">
@@ -89,7 +103,7 @@ function Transacciones() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {sampleTransactions.map((tx) => (
+              {filteredTransactions.map((tx) => (
                 <tr key={tx.id} className="hover:bg-slate-50 transition-colors group">
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{tx.date}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
