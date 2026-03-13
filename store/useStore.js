@@ -211,6 +211,27 @@ export const useStore = create(
         return { transactions: [newTx, ...state.transactions] }
       }),
 
+      updateTransaction: ({ id, description, amount, date, accountId }) => set((state) => ({
+        transactions: state.transactions.map((transaction) => {
+          if (transaction.id !== id) {
+            return transaction
+          }
+
+          const nextAccount = accountId
+            ? state.accounts.find((item) => item.id === accountId)
+            : null
+
+          return {
+            ...transaction,
+            description: description !== undefined ? description : transaction.description,
+            amount: Number.isFinite(amount) ? amount : transaction.amount,
+            date: date || transaction.date,
+            accountId: accountId || null,
+            accountName: nextAccount?.name || transaction.accountName || transaction.account || 'Sin cuenta'
+          }
+        })
+      })),
+
       deleteTransaction: (id) => set((state) => ({
         transactions: state.transactions.filter((transaction) => transaction.id !== id)
       }))
