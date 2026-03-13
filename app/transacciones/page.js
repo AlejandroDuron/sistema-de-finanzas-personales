@@ -2,12 +2,14 @@
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import Layout from '../../components/Layout'
 import { useStore } from '../../store/useStore'
 import withAuth from '../../src/guards/withAuth'
 
 function Transacciones() {
   const { transactions, deleteTransaction } = useStore()
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState('all')
   const [openMenuId, setOpenMenuId] = useState(null)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
@@ -80,6 +82,11 @@ function Transacciones() {
 
   const toggleTransactionMenu = (transactionId) => {
     setOpenMenuId((current) => (current === transactionId ? null : transactionId))
+  }
+
+  const openEditPage = (transactionId) => {
+    setOpenMenuId(null)
+    router.push(`/editar_transaccion?id=${encodeURIComponent(String(transactionId))}`)
   }
 
   return (
@@ -194,6 +201,9 @@ function Transacciones() {
                             <span className="material-symbols-outlined">more_vert</span>
                           </button>
                           <div className={`dropdown-menu transaction-actions-menu ${openMenuId === tx.id ? 'show' : ''}`}>
+                            <button className="dropdown-item" type="button" onClick={() => openEditPage(tx.id)}>
+                              Editar
+                            </button>
                             <button className="dropdown-item text-danger" type="button" onClick={() => openDeleteModal(tx)}>
                               Eliminar
                             </button>
