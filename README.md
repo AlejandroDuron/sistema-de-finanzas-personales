@@ -40,7 +40,7 @@ npm run dev
 
 
 
-#Estructura de carpetas de la arquitectura monolito modular para la app
+##Estructura de carpetas de la arquitectura monolito modular para la app
 ```text
 finanzas-app/
 │
