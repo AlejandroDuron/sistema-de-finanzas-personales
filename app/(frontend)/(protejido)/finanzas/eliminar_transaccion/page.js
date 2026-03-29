@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from 'next/navigation'
-import Layout from '../../../../components/Layout'
+import Layout from '../../../components/Layout'
 
 export default function EliminarTransaccion() {
   const router = useRouter()
@@ -21,7 +21,7 @@ export default function EliminarTransaccion() {
           <div className="px-6 pb-6 flex gap-3">
             <button
               className="flex-1 py-3 text-sm font-bold text-slate-600 hover:text-slate-900 border border-slate-200 rounded-xl transition-colors"
-              onClick={() => router.push('/transacciones')}
+              onClick={() => router.push('/finanzas')}
             >
               Cancelar
             </button>

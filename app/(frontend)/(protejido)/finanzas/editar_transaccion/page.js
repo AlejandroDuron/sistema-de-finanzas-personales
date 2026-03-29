@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import Layout from '../../../../components/Layout'
-import { useStore } from '../../../../hooks/useStore'
-import withAuth from '../../../../src/guards/withAuth'
+import Layout from '../../../components/Layout'
+import { useStore } from '../../../hooks/useStore'
+import withAuth from '../../../src/guards/withAuth'
 
 const toInputDate = (value) => {
   if (!value) {
@@ -41,7 +41,7 @@ function EditarTransaccion() {
 
   useEffect(() => {
     if (!transactionId) {
-      router.replace('/transacciones')
+      router.replace('/finanzas')
     }
   }, [router, transactionId])
 
@@ -58,7 +58,7 @@ function EditarTransaccion() {
   }, [transaction])
 
   const closeModal = () => {
-    router.push('/transacciones')
+    router.push('/finanzas')
   }
 
   const handleSubmit = (event) => {

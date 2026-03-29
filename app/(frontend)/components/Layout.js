@@ -21,7 +21,7 @@ export default function Layout({ children, title = 'Mi Finanzas' }) {
   }
 
   const navItems = [
-    { href: '/transacciones', label: 'Transacciones', icon: 'receipt_long' },
+    { href: '/finanzas', label: 'Transacciones', icon: 'receipt_long' },
     { href: '/carteras', label: 'Carteras', icon: 'account_balance_wallet' },
     { href: '/presupuestos', label: 'Presupuestos', icon: 'pie_chart' },
   ]

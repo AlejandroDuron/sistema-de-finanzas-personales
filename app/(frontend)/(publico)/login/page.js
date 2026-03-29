@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { getSession, login, registerUser, resetPassword } from '../../../src/services/authService'
+import { getSession, login, registerUser, resetPassword } from '../../src/services/authService'
 
 const AUTH_TABS = {
   LOGIN: 'login',
@@ -43,7 +43,7 @@ export default function Login() {
     const session = getSession()
 
     if (session) {
-      router.replace('/transacciones')
+      router.replace('/finanzas')
       return
     }
 
@@ -81,7 +81,7 @@ export default function Login() {
       return
     }
 
-    router.push('/transacciones')
+    router.push('/finanzas')
   }
 
   const handleRegisterSubmit = async (event) => {

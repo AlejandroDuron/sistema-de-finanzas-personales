@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Layout from '../../../../components/Layout'
-import { useStore } from '../../../../hooks/useStore'
+import Layout from '../../../components/Layout'
+import { useStore } from '../../../hooks/useStore'
 
 export default function NuevaTransaccion() {
   const { accounts, budgets, addTransaction } = useStore()
@@ -23,7 +23,7 @@ export default function NuevaTransaccion() {
   }, [accountId, accounts])
 
   const closeModal = () => {
-    router.push('/transacciones')
+    router.push('/finanzas')
   }
 
   const handleSubmit = (event) => {

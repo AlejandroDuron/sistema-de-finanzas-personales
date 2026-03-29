@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
-import '../styles/globals.css'
+import './styles/globals.css'
 
 export const metadata = {
   title: 'Mi Finanzas'
