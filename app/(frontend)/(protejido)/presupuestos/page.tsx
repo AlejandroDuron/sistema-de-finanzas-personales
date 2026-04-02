@@ -2,7 +2,7 @@
 
 import type { FormEvent, MouseEvent } from 'react'
 import { useMemo, useState } from 'react'
-import { formatBudgetDueDate, mapBudgetsWithVisuals } from '../../modules/presupuestos/utils/budgets'
+import { formatBudgetDueDate, mapBudgetsWithVisuals } from '../../modules/presupuestos/budgets'
 import AppLayout from '../../shared/components/AppLayout'
 import withAuth from '../../shared/guards/withAuth'
 import { useAppStore } from '../../shared/hooks/useAppStore'

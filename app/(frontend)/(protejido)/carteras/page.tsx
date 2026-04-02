@@ -2,7 +2,7 @@
 
 import type { FormEvent, MouseEvent } from 'react'
 import { useMemo, useState } from 'react'
-import { mapWallets } from '../../modules/carteras/utils/wallets'
+import { mapWallets } from '../../modules/carteras/wallets'
 import AppLayout from '../../shared/components/AppLayout'
 import withAuth from '../../shared/guards/withAuth'
 import { useAppStore } from '../../shared/hooks/useAppStore'

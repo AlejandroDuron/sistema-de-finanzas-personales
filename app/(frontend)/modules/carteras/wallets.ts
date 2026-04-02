@@ -1,4 +1,4 @@
-import type { Account, WalletSummary, WalletVisuals } from '../../../shared/types/finance'
+import type { Account, WalletSummary, WalletVisuals } from '../../shared/types/finance'
 
 export function getWalletGoal(balance: number, goal?: number | null): number {
   const safeGoal = typeof goal === 'number' && Number.isFinite(goal) ? goal : null

@@ -1,4 +1,4 @@
-import type { Budget, BudgetVisuals, BudgetWithVisuals } from '../../../shared/types/finance'
+import type { Budget, BudgetVisuals, BudgetWithVisuals } from '../../shared/types/finance'
 
 export function formatBudgetDueDate(value: string | null | undefined): string {
   if (!value) {
