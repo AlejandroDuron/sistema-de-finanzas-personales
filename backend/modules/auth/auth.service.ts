@@ -58,6 +58,10 @@ const toSpanishAuthMessage = (message?: string): string => {
     return 'Ya existe una cuenta con ese correo.'
   }
 
+  if (normalized === 'invalid api key') {
+    return 'La configuración de Supabase es inválida en el servidor. Verifica las variables de entorno.'
+  }
+
   if (normalized.includes('password should be at least')) {
     return 'La contraseña no cumple el mínimo de caracteres requerido.'
   }

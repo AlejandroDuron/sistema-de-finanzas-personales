@@ -10,20 +10,33 @@ export const authCookieOptions = {
   secure: process.env.NODE_ENV === 'production'
 }
 
-const getSupabaseEnv = () => {
-  const url = process.env.SUPABASE_URL
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+const normalizeEnvValue = (value?: string): string => {
+  if (!value) {
+    return ''
+  }
 
-  if (!url || !serviceRoleKey) {
+  const trimmed = value.trim()
+  return trimmed.replace(/^['\"]|['\"]$/g, '')
+}
+
+const getSupabaseEnv = () => {
+  const url = normalizeEnvValue(process.env.SUPABASE_URL)
+  const serviceRoleKey = normalizeEnvValue(process.env.SUPABASE_SERVICE_ROLE_KEY)
+  const serverAnonKey = normalizeEnvValue(process.env.SUPABASE_ANON_KEY)
+  const publicAnonKey = normalizeEnvValue(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+
+  const authKey = serviceRoleKey || serverAnonKey || publicAnonKey
+
+  if (!url || !authKey) {
     throw new Error('Faltan las variables de entorno de Supabase.')
   }
 
-  return { url, serviceRoleKey }
+  return { url, authKey }
 }
 
 export const createSupabaseServerAuthClient = () => {
-  const { url, serviceRoleKey } = getSupabaseEnv()
-  return createClient(url, serviceRoleKey)
+  const { url, authKey } = getSupabaseEnv()
+  return createClient(url, authKey)
 }
 
 export const verifyAccessToken = async (accessToken: string): Promise<boolean> => {
