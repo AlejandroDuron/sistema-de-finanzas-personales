@@ -28,36 +28,42 @@ export default function ResetPasswordModal({
   const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault()
     setError('')
+    const normalizedEmail = email.trim().toLowerCase()
 
-    if (!email.trim()) {
+    if (!normalizedEmail) {
       setError('Debes ingresar un correo electrónico.')
       return
     }
 
     setIsLoading(true)
-    const formData = new FormData()
-    formData.set('email', email)
-    const result = await requestPasswordResetAction(formData)
 
-    if (!result.success) {
-      setError(result.message || 'No se pudo procesar la solicitud.')
+    try {
+      const formData = new FormData()
+      formData.set('email', normalizedEmail)
+      const result = await requestPasswordResetAction(formData)
+
+      if (!result.success) {
+        setError(result.message || 'No se pudo procesar la solicitud.')
+        return
+      }
+
+      onSuccess({
+        email: normalizedEmail,
+        message: result.message || 'Revisa tu correo para restablecer la contraseña.'
+      })
+
+      onClose()
+    } catch (error) {
+      setError('No se pudo procesar la solicitud.')
+    } finally {
       setIsLoading(false)
-      return
     }
-
-    onSuccess({
-      email: email.trim().toLowerCase(),
-      message: result.message || 'Revisa tu correo para restablecer la contraseña.'
-    })
-
-    setIsLoading(false)
-    onClose()
   }
 
   return (
     <>
       <div
-        className="modal d-block wallet-modal"
+        className="modal d-block auth-modal"
         tabIndex={-1}
         role="dialog"
         style={{ zIndex: 1085 }}

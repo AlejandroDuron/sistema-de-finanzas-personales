@@ -6,8 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { AuthAlert, AuthFormField, AuthPasswordField } from '@/features/auth/AuthForm'
 import AuthShell from '@/features/auth/AuthShell'
 import ResetPasswordModal from '@/features/auth/ResetPasswordModal'
-import { getCurrentUserAction, loginAction } from '@/features/auth/actions'
-import StatusScreen from '@/shared/components/StatusScreen'
+import { loginAction } from '@/features/auth/actions'
 
 interface ResetPasswordSuccessPayload {
   email: string
@@ -17,7 +16,6 @@ interface ResetPasswordSuccessPayload {
 export default function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [isCheckingSession, setIsCheckingSession] = useState<boolean>(true)
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [error, setError] = useState<string>('')
@@ -28,21 +26,6 @@ export default function LoginPage() {
   useEffect(() => {
     document.title = 'Mis Finanzas - Iniciar sesión'
   }, [])
-
-  useEffect(() => {
-    const checkSession = async () => {
-      const session = await getCurrentUserAction()
-
-      if (session) {
-        router.replace('/finanzas')
-        return
-      }
-
-      setIsCheckingSession(false)
-    }
-
-    void checkSession()
-  }, [router])
 
   useEffect(() => {
     const flashEmail = searchParams.get('email')
@@ -84,10 +67,6 @@ export default function LoginPage() {
     setPassword('')
     setError('')
     setSuccess(message)
-  }
-
-  if (isCheckingSession) {
-    return <StatusScreen message="Cargando sesión..." />
   }
 
   return (
