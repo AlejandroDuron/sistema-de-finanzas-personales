@@ -6,7 +6,7 @@ import {
   AUTH_REFRESH_TOKEN_COOKIE,
   authCookieOptions,
   createSupabaseServerAuthClient
-} from '@/backend/lib/auth.server'
+} from '@/backend/lib/supabase'
 
 export interface AuthUser {
   id: string

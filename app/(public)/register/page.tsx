@@ -5,12 +5,10 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AuthAlert, AuthFormField, AuthPasswordField } from '@/features/auth/AuthForm'
 import AuthShell from '@/features/auth/AuthShell'
-import { getCurrentUserAction, registerAction } from '@/features/auth/actions'
-import StatusScreen from '@/shared/components/StatusScreen'
+import { registerAction } from '@/features/auth/actions'
 
 export default function CrearCuenta() {
   const router = useRouter()
-  const [isCheckingSession, setIsCheckingSession] = useState<boolean>(true)
   const [name, setName] = useState<string>('')
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
@@ -22,39 +20,26 @@ export default function CrearCuenta() {
     document.title = 'Mis Finanzas - Registrarse'
   }, [])
 
-  useEffect(() => {
-    const checkSession = async () => {
-      const session = await getCurrentUserAction()
-
-      if (session) {
-        router.replace('/finanzas')
-        return
-      }
-
-      setIsCheckingSession(false)
-    }
-
-    void checkSession()
-  }, [router])
-
   const handleSubmit = async (formData: FormData): Promise<void> => {
     setError('')
     setIsLoading(true)
-    const result = await registerAction(formData)
 
-    if (!result.success) {
-      setError(result.message || 'No se pudo crear la cuenta.')
+    try {
+      const result = await registerAction(formData)
+
+      if (!result.success) {
+        setError(result.message || 'No se pudo crear la cuenta.')
+        return
+      }
+
+      const targetEmail = result.user?.email || email.trim().toLowerCase()
+      const targetMessage = encodeURIComponent(result.message || 'Cuenta creada correctamente. Ahora inicia sesión con tu correo y contraseña.')
+      router.push(`/login?email=${encodeURIComponent(targetEmail)}&success=${targetMessage}`)
+    } catch (error) {
+      setError('No se pudo crear la cuenta.')
+    } finally {
       setIsLoading(false)
-      return
     }
-
-    const targetEmail = result.user?.email || email.trim().toLowerCase()
-    const targetMessage = encodeURIComponent(result.message || 'Cuenta creada correctamente. Ahora inicia sesión con tu correo y contraseña.')
-    router.push(`/login?email=${encodeURIComponent(targetEmail)}&success=${targetMessage}`)
-  }
-
-  if (isCheckingSession) {
-    return <StatusScreen message="Cargando sesión..." />
   }
 
   return (
