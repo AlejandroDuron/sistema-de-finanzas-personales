@@ -148,11 +148,13 @@ body {
   z-index: 1100;
 }
 
-.wallet-modal .modal-dialog {
+.wallet-modal .modal-dialog,
+.auth-modal .modal-dialog {
   margin: 1rem auto;
 }
 
-.wallet-modal .modal-content {
+.wallet-modal .modal-content,
+.auth-modal .modal-content {
   border: 0;
   box-shadow: 0 0.75rem 2rem rgba(33, 37, 41, 0.18);
 }

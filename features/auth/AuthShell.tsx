@@ -14,7 +14,7 @@ const FEATURE_ITEMS = [
   {
     icon: 'shield',
     title: 'Acceso seguro',
-    description: 'Tu sesión se guarda localmente para continuar rápido.'
+    description: 'Tu sesión se gestiona de forma segura para proteger tu acceso.'
   }
 ] as const
 
