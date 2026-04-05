@@ -50,11 +50,10 @@ const getBackendSupabaseEnv = () => {
 
 const getServerAuthEnv = () => {
   const url = normalizeEnvValue(process.env.SUPABASE_URL)
-  const serviceRoleKey = normalizeEnvValue(process.env.SUPABASE_SERVICE_ROLE_KEY)
   const serverAnonKey = normalizeEnvValue(process.env.SUPABASE_ANON_KEY)
   const publicAnonKey = normalizeEnvValue(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
 
-  const authKey = serviceRoleKey || serverAnonKey || publicAnonKey
+  const authKey = serverAnonKey || publicAnonKey
 
   if (!url || !authKey) {
     throw new Error('Faltan las variables de entorno de Supabase.')

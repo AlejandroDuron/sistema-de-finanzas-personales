@@ -3,17 +3,17 @@ import { NextResponse } from 'next/server'
 import {
   AUTH_ACCESS_TOKEN_COOKIE,
   AUTH_REFRESH_TOKEN_COOKIE,
-  verifyAccessToken
+  authCookieOptions,
+  verifyAccessToken,
+  createSupabaseServerAuthClient
 } from './src/lib/supabaseClient'
 
-// protectedPrefixes define las rutas que requieren autenticación. Cualquier ruta que comience con uno de estos prefijos será protegida por el middleware.
 const protectedPrefixes = ['/finanzas', '/carteras', '/presupuestos']
 const publicAuthPaths = ['/login', '/register']
 
 const isProtectedPath = (pathname: string): boolean => (
   protectedPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
 )
-
 const isPublicAuthPath = (pathname: string): boolean => publicAuthPaths.includes(pathname)
 
 export async function middleware(request: NextRequest) {
@@ -26,32 +26,57 @@ export async function middleware(request: NextRequest) {
   }
 
   const accessToken = request.cookies.get(AUTH_ACCESS_TOKEN_COOKIE)?.value
+  const refreshToken = request.cookies.get(AUTH_REFRESH_TOKEN_COOKIE)?.value
 
-  if (!accessToken) {
-    if (isPublicAuth) {
-      return NextResponse.next()
+  let isValidSession = accessToken ? await verifyAccessToken(accessToken) : false
+  let cookiesToSet: { access: string; refresh: string; expiresIn: number } | null = null
+
+  if (!isValidSession && refreshToken) {
+    const supabase = createSupabaseServerAuthClient()
+    const { data, error } = await supabase.auth.refreshSession({ refresh_token: refreshToken })
+
+    if (data.session && !error) {
+      isValidSession = true
+      cookiesToSet = {
+        access: data.session.access_token,
+        refresh: data.session.refresh_token,
+        expiresIn: data.session.expires_in
+      }
     }
-
-    return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  const isValidSession = await verifyAccessToken(accessToken)
+  let response: NextResponse
 
   if (!isValidSession) {
-    const response = isProtected
+    response = isProtected
       ? NextResponse.redirect(new URL('/login', request.url))
       : NextResponse.next()
-
     response.cookies.delete(AUTH_ACCESS_TOKEN_COOKIE)
     response.cookies.delete(AUTH_REFRESH_TOKEN_COOKIE)
     return response
   }
 
   if (isPublicAuth) {
-    return NextResponse.redirect(new URL('/finanzas', request.url))
+    response = NextResponse.redirect(new URL('/finanzas', request.url))
+  } else {
+    response = NextResponse.next()
   }
-
-  return NextResponse.next()
+  // Actualización de Cookies (Si se renovó la sesión)
+  if (cookiesToSet) {
+    response.cookies.set({
+      name: AUTH_ACCESS_TOKEN_COOKIE,
+      value: cookiesToSet.access,
+      ...authCookieOptions,
+      maxAge: cookiesToSet.expiresIn
+    })
+    response.cookies.set({
+      name: AUTH_REFRESH_TOKEN_COOKIE,
+      value: cookiesToSet.refresh,
+      ...authCookieOptions,
+      maxAge: 60 * 60 * 24 * 30 // Renovar los 30 días
+    })
+  }
+  return response
 }
 
 export const config = {
