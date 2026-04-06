@@ -2,9 +2,9 @@
 export interface Transaccion {
   id: string
   user_id: string
-  cartera_id: string | null
+  cartera_id: string 
   presupuesto_id: string | null
-  categoria_id: string | null
+  categoria_id: string
   tipo: TransaccionType
   monto: number
   descripcion: string
@@ -35,9 +35,9 @@ export interface CreateTransaccionInput {
   monto: number
   fecha: string
   tipo: TransaccionType
-  cartera_id?: string | null
+  cartera_id?: string 
   presupuesto_id?: string | null
-  categoria_id?: string | null
+  categoria_id?: string 
 }
 
 export interface UpdateTransaccionInput {

@@ -27,6 +27,8 @@ export async function crear(
     if (!input.monto) return { ok: false, message: 'El monto es obligatorio' }
     if (!input.tipo) return { ok: false, message: 'El tipo es obligatorio' }
     if (!input.fecha) return { ok: false, message: 'La fecha es obligatoria' }
+    if (!input.categoria_id) return { ok: false, message: 'La categoria es obligatoria' }
+    if (!input.cartera_id) return { ok: false, message: 'La cartera es obligatoria' }
 
     const data = await transaccionRepository.insert(userId, input)
 

@@ -91,9 +91,9 @@ export default function FinanzasPage() {
         monto,
         fecha: form.fecha,
         tipo: form.tipo,
-        cartera_id: form.cartera_id || null,
+        cartera_id: form.cartera_id,
         presupuesto_id: form.tipo === 'gasto' ? (form.presupuesto_id || null) : null,
-        categoria_id: form.categoria_id || null
+        categoria_id: form.categoria_id
       })
     }
     closeForm()

@@ -165,6 +165,7 @@ export default function TransaccionFormModal({
                     className="form-select"
                     value={form.categoria_id}
                     onChange={updateField('categoria_id')}
+                    required
                   >
                     <option value="">Sin categoría</option>
                     {categorias.map((c) => (
