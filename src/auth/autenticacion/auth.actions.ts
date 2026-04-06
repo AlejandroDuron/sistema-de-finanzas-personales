@@ -66,7 +66,7 @@ export async function loginAction(formData: FormData): Promise<AuthActionResult>
       return { success: false, message: toSpanishAuthMessage(error?.message) || 'No se pudo iniciar sesión.' }
     }
 
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     cookieStore.set(AUTH_ACCESS_TOKEN_COOKIE, data.session.access_token, {
       ...authCookieOptions,
       maxAge: data.session.expires_in
@@ -164,7 +164,7 @@ export async function registerAction(formData: FormData): Promise<AuthActionResu
 }
 
 export async function logoutAction(): Promise<void> {
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   const accessToken = cookieStore.get(AUTH_ACCESS_TOKEN_COOKIE)?.value
 
   if (accessToken) {
@@ -181,7 +181,7 @@ export async function logoutAction(): Promise<void> {
 }
 
 export async function getCurrentUserAction(): Promise<AuthUser | null> {
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   const accessToken = cookieStore.get(AUTH_ACCESS_TOKEN_COOKIE)?.value
 
   if (!accessToken) {

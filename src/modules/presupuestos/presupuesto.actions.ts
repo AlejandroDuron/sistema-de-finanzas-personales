@@ -11,7 +11,7 @@ import type { Presupuesto, CreatePresupuestoInput, UpdatePresupuestoInput } from
 import * as presupuestoService from './presupuesto.service'
 
 async function getUserId(): Promise<string> {
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   const accessToken = cookieStore.get(AUTH_ACCESS_TOKEN_COOKIE)?.value
   if (!accessToken) throw new Error('No autenticado')
 
