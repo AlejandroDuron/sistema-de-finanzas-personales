@@ -1,11 +1,13 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import type { CarteraSummary } from '../cartera.schema'
 
 interface CarteraCardProps {
   cartera: CarteraSummary
   isMenuOpen: boolean
   onToggleMenu: () => void
+  onCloseMenu: () => void
   onEdit: () => void
   onDelete: () => void
 }
@@ -14,9 +16,41 @@ export default function CarteraCard({
   cartera,
   isMenuOpen,
   onToggleMenu,
+  onCloseMenu,
   onEdit,
   onDelete
 }: CarteraCardProps) {
+  const actionsRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!isMenuOpen) {
+      return
+    }
+
+    const handlePointerDown = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node | null
+      if (target && !actionsRef.current?.contains(target)) {
+        onCloseMenu()
+      }
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onCloseMenu()
+      }
+    }
+
+    document.addEventListener('mousedown', handlePointerDown)
+    document.addEventListener('touchstart', handlePointerDown)
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown)
+      document.removeEventListener('touchstart', handlePointerDown)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isMenuOpen, onCloseMenu])
+
   const percent = Math.min(
     100,
     Math.max(0, Math.round((cartera.balance_inicial / cartera.objetivo_cantidad) * 100))
@@ -61,7 +95,7 @@ export default function CarteraCard({
         )}
 
         {/* Menú acciones */}
-        <div className="position-relative ms-lg-auto">
+        <div className="position-relative ms-lg-auto" ref={actionsRef}>
           <button
             className="btn btn-link text-secondary p-0"
             type="button"

@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import { formatPresupuestoDate } from '../presupuesto.schema'
 import type { PresupuestoSummary } from '../presupuesto.schema'
 import { usePresupuestoStore } from '../hooks/usePresupuestoStore'
@@ -17,11 +18,41 @@ export default function PresupuestoCard({
 }: PresupuestoCardProps) {
   const { openMenuId, toggleMenu, closeMenu } = usePresupuestoStore()
   const isMenuOpen = openMenuId === presupuesto.id
+  const actionsRef = useRef<HTMLDivElement>(null)
   const consumido = Math.max(0, presupuesto.monto_consumido)
   const disponible = presupuesto.monto_limite - consumido
   const progreso = presupuesto.monto_limite > 0
     ? Math.min(100, Math.max(0, (consumido / presupuesto.monto_limite) * 100))
     : 0
+
+  useEffect(() => {
+    if (!isMenuOpen) {
+      return
+    }
+
+    const handlePointerDown = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node | null
+      if (target && !actionsRef.current?.contains(target)) {
+        closeMenu()
+      }
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeMenu()
+      }
+    }
+
+    document.addEventListener('mousedown', handlePointerDown)
+    document.addEventListener('touchstart', handlePointerDown)
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown)
+      document.removeEventListener('touchstart', handlePointerDown)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isMenuOpen, closeMenu])
 
   return (
     <div className="list-group-item py-3">
@@ -58,7 +89,7 @@ export default function PresupuestoCard({
         </div>
 
         {/* Menú acciones */}
-        <div className="position-relative">
+        <div className="position-relative" ref={actionsRef}>
           <button
             className="btn btn-link text-secondary p-0"
             type="button"
@@ -68,7 +99,7 @@ export default function PresupuestoCard({
             <span className="material-symbols-outlined">more_vert</span>
           </button>
           {isMenuOpen && (
-            <div className="dropdown-menu dropdown-menu-end show">
+            <div className="dropdown-menu dropdown-menu-end show budget-actions-menu">
               <button
                 className="dropdown-item"
                 type="button"
