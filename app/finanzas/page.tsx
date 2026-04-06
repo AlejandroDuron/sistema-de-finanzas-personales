@@ -82,6 +82,7 @@ export default function FinanzasPage() {
         fecha: form.fecha,
         tipo: form.tipo,
         cartera_id: form.cartera_id || null,
+        presupuesto_id: form.tipo === 'gasto' ? (form.presupuesto_id || null) : null,
         categoria_id: form.categoria_id || null
       })
     } else {
@@ -91,6 +92,7 @@ export default function FinanzasPage() {
         fecha: form.fecha,
         tipo: form.tipo,
         cartera_id: form.cartera_id || null,
+        presupuesto_id: form.tipo === 'gasto' ? (form.presupuesto_id || null) : null,
         categoria_id: form.categoria_id || null
       })
     }

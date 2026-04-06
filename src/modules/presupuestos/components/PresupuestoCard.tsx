@@ -17,6 +17,11 @@ export default function PresupuestoCard({
 }: PresupuestoCardProps) {
   const { openMenuId, toggleMenu, closeMenu } = usePresupuestoStore()
   const isMenuOpen = openMenuId === presupuesto.id
+  const consumido = Math.max(0, presupuesto.monto_consumido)
+  const disponible = presupuesto.monto_limite - consumido
+  const progreso = presupuesto.monto_limite > 0
+    ? Math.min(100, Math.max(0, (consumido / presupuesto.monto_limite) * 100))
+    : 0
 
   return (
     <div className="list-group-item py-3">
@@ -38,11 +43,17 @@ export default function PresupuestoCard({
           </div>
         </div>
 
-        {/* Monto límite */}
+        {/* Resumen de consumo */}
         <div className="text-lg-end">
           <p className="small text-secondary mb-1">Límite</p>
           <p className="h5 fw-bold mb-0">
             ${presupuesto.monto_limite.toLocaleString('es-SV', { maximumFractionDigits: 2 })}
+          </p>
+          <p className="small text-secondary mb-0 mt-1">
+            Consumido: ${consumido.toLocaleString('es-SV', { maximumFractionDigits: 2 })}
+          </p>
+          <p className={`small mb-0 ${disponible < 0 ? 'text-danger' : 'text-secondary'}`}>
+            Disponible: ${disponible.toLocaleString('es-SV', { maximumFractionDigits: 2 })}
           </p>
         </div>
 
@@ -76,6 +87,13 @@ export default function PresupuestoCard({
           )}
         </div>
 
+      </div>
+
+      <div className="progress mt-3" role="progressbar" aria-valuenow={progreso} aria-valuemin={0} aria-valuemax={100}>
+        <div
+          className={`progress-bar ${progreso >= 100 ? 'bg-danger' : 'bg-primary'}`}
+          style={{ width: `${progreso}%` }}
+        />
       </div>
     </div>
   )

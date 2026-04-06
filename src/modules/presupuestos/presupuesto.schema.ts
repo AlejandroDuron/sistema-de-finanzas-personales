@@ -35,6 +35,7 @@ export interface PresupuestoSummary extends PresupuestoVisuals {
   id: string
   nombre: string
   monto_limite: number
+  monto_consumido: number
   fecha_inicio: string
   fecha_fin: string | null
 }
@@ -85,11 +86,14 @@ export function getPresupuestoVisuals(nombre: string): PresupuestoVisuals {
   return { icon: 'calendar_month', iconBg: 'bg-primary bg-opacity-10 text-primary' }
 }
 
-export function toPresupuestoSummary(p: Presupuesto): PresupuestoSummary {
+export function toPresupuestoSummary(
+  p: Presupuesto & { monto_consumido?: number | null }
+): PresupuestoSummary {
   return {
     id: p.id,
     nombre: p.nombre,
     monto_limite: p.monto_limite,
+    monto_consumido: Number(p.monto_consumido ?? 0),
     fecha_inicio: p.fecha_inicio,
     fecha_fin: p.fecha_fin,
     ...getPresupuestoVisuals(p.nombre)

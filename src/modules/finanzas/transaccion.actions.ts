@@ -66,6 +66,7 @@ export async function crearTransaccionAction(
     if (result.ok){
       revalidatePath('/finanzas')
       revalidatePath('/carteras') 
+      revalidatePath('/presupuestos')
     }
     return result
   } catch (e){
@@ -82,6 +83,7 @@ export async function actualizarTransaccionAction(
     if (result.ok){
       revalidatePath('/finanzas')
       revalidatePath('/carteras')
+      revalidatePath('/presupuestos')
     }
     return result
   } catch {
@@ -97,6 +99,7 @@ export async function eliminarTransaccionAction(
     if (result.ok) {
       revalidatePath('/finanzas')
       revalidatePath('/carteras')
+      revalidatePath('/presupuestos')
     }
     return result
   } catch {

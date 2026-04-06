@@ -9,6 +9,7 @@ import {
   validateUpdatePresupuesto
 } from './presupuesto.schema'
 import * as presupuestoRepository from './presupuesto.repository'
+import * as transaccionRepository from '../finanzas/transaccion.repository'
 
 // Detecta si dos rangos de fechas se superponen.
 // Un rango con fecha_fin null se extiende indefinidamente.
@@ -36,7 +37,23 @@ async function findOverlapping(
 
 export async function listar(userId: string): Promise<ServiceResult<Presupuesto[]>> {
   try {
-    const data = await presupuestoRepository.findAll(userId)
+    const [presupuestos, transacciones] = await Promise.all([
+      presupuestoRepository.findAll(userId),
+      transaccionRepository.findAll(userId)
+    ])
+
+    const consumidoPorPresupuesto = transacciones.reduce<Record<string, number>>((acc, tx) => {
+      if (!tx.presupuesto_id || tx.tipo !== 'gasto') return acc
+      const actual = acc[tx.presupuesto_id] ?? 0
+      acc[tx.presupuesto_id] = actual + Math.abs(tx.monto)
+      return acc
+    }, {})
+
+    const data = presupuestos.map((p) => ({
+      ...p,
+      monto_consumido: consumidoPorPresupuesto[p.id] ?? 0
+    }))
+
     return { ok: true, data }
   } catch {
     return { ok: false, message: 'No se pudieron cargar los presupuestos.' }
