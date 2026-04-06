@@ -6,6 +6,9 @@ import type {
 } from './transaccion.schema'
 import * as transaccionRepository from './transaccion.repository'
 import * as carteraRepository from '../carteras/cartera.repository'
+import * as presupuestoRepository from '../presupuestos/presupuesto.repository'
+import { sendBudgetAlert, sendHighAmountAlert } from '@/src/lib/brevo'
+import { createBackendSupabaseClient } from '@/src/lib/supabaseClient'
 
 export async function listar(userId: string): Promise<ServiceResult<Transaccion[]>> {
   try {
@@ -24,7 +27,7 @@ export async function crear(
     if (!input.monto) return { ok: false, message: 'El monto es obligatorio' }
     if (!input.tipo) return { ok: false, message: 'El tipo es obligatorio' }
     if (!input.fecha) return { ok: false, message: 'La fecha es obligatoria' }
-    
+
     const data = await transaccionRepository.insert(userId, input)
 
     // Actualizar balance de la cartera si se especificó una
@@ -38,8 +41,67 @@ export async function crear(
       }
     }
 
+    let userEmail: string | undefined
+
+    try {
+      const supabase = createBackendSupabaseClient()
+      const { data, error } = await supabase.auth.admin.getUserById(userId)
+      if (error) throw error
+      userEmail = data.user?.email
+      if (!userEmail) {
+        console.warn('Usuario sin email en Supabase Auth:', userId)
+      }
+    } catch (authError) {
+      console.error('No se pudo obtener el correo del usuario:', authError)
+    }
+
+    // Solo disparamos la lógica asíncrona de alertas si tenemos el correo y es un gasto
+    if (userEmail && input.tipo === 'gasto') {
+      void (async () => {
+        try {
+          // Alerta de monto alto
+          const montoAbsoluto = Math.abs(Number(input.monto) || 0)
+
+          if (montoAbsoluto >= 500) {
+            await sendHighAmountAlert(userEmail, montoAbsoluto, input.descripcion)
+          }
+
+          if (!input.presupuesto_id) return
+
+          // Alertas de presupuesto
+          const presupuesto = await presupuestoRepository.findById(userId, input.presupuesto_id)
+          if (!presupuesto) return
+
+          const montoLimite = Number(presupuesto.monto_limite)
+          if (!Number.isFinite(montoLimite) || montoLimite <= 0) return
+
+          const transacciones = await transaccionRepository.findAll(userId)
+          const totalGastado = transacciones
+            .filter(
+              (tx) => tx.presupuesto_id === input.presupuesto_id && tx.tipo === 'gasto'
+            )
+            .reduce((acc, tx) => acc + Math.abs(Number(tx.monto) || 0), 0)
+
+          const porcentaje = (totalGastado / montoLimite) * 100
+
+          if (porcentaje >= 100) {
+            await sendBudgetAlert(userEmail, presupuesto.nombre, porcentaje, true)
+            return
+          }
+
+          if (porcentaje >= 80) {
+            await sendBudgetAlert(userEmail, presupuesto.nombre, porcentaje, false)
+          }
+        } catch (error) {
+          console.error('Error en notificaciones de fondo:', error)
+        }
+      })()
+    } else if (input.tipo === 'gasto') {
+      console.warn('No se enviaron alertas: email no disponible para userId', userId)
+    }
+
     return { ok: true, data }
-  } catch (e){
+  } catch (e) {
     return { ok: false, message: 'No se pudo crear la transacción' }
   }
 }
@@ -88,17 +150,17 @@ export async function actualizar(
 export async function eliminar(id: string): Promise<ServiceResult<void>> {
   try {
     const tx = await transaccionRepository.findById(id)
-    
+
     if (tx?.cartera_id) {
       const cartera = await carteraRepository.findById(tx.cartera_id)
-      
+
       if (cartera) {
         const balanceRevertido = tx.tipo === 'ingreso'
           ? cartera.balance - Math.abs(tx.monto)
           : cartera.balance + Math.abs(tx.monto)
-        
+
         await carteraRepository.update(tx.cartera_id, { balance: balanceRevertido })
-        
+
         const carteraActualizada = await carteraRepository.findById(tx.cartera_id)
       }
     }
