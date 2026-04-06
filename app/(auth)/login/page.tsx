@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
 import { AuthAlert, AuthFormField, AuthPasswordField } from '@/src/auth/autenticacion/components/AuthForm'
 import AuthShell from '@/src/auth/autenticacion/components/AuthShell'
 import ResetPasswordModal from '@/src/auth/autenticacion/components/ResetPasswordModal'
@@ -14,8 +13,6 @@ interface ResetPasswordSuccessPayload {
 }
 
 export default function LoginPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [error, setError] = useState<string>('')
@@ -27,34 +24,18 @@ export default function LoginPage() {
     document.title = 'Mis Finanzas - Iniciar sesión'
   }, [])
 
-  useEffect(() => {
-    const flashEmail = searchParams.get('email')
-    const flashMessage = searchParams.get('success')
-
-    if (flashEmail) {
-      setEmail(flashEmail)
-    }
-
-    if (flashMessage) {
-      setSuccess(flashMessage)
-    }
-  }, [searchParams])
-
   const handleLogin = async (formData: FormData): Promise<void> => {
     setError('')
     setSuccess('')
-
+    setIsLoading(true)
     try {
-      setIsLoading(true)
       const result = await loginAction(formData)
-
       if (!result.success) {
         setError(result.message || 'Correo o contraseña incorrectos.')
         return
       }
-
-      router.replace('/finanzas')
-    } catch (error) {
+      window.location.href = '/finanzas'
+    } catch {
       setError('No se pudo completar el inicio de sesión. Inténtalo de nuevo.')
     } finally {
       setIsLoading(false)
@@ -83,7 +64,7 @@ export default function LoginPage() {
           </p>
         )}
       >
-        <form className="d-grid gap-3" action={handleLogin}>
+        <form className="d-grid gap-3" onSubmit={(e) => { e.preventDefault(); handleLogin(new FormData(e.currentTarget)) }}>
           <AuthFormField
             autoComplete="email"
             autoFocus
@@ -97,7 +78,6 @@ export default function LoginPage() {
             value={email}
             onChange={setEmail}
           />
-
           <AuthPasswordField
             autoComplete="current-password"
             id="login-password"
@@ -108,10 +88,8 @@ export default function LoginPage() {
             value={password}
             onChange={setPassword}
           />
-
           <AuthAlert message={error} />
           <AuthAlert message={success} variant="success" />
-
           <div className="d-flex align-items-center justify-content-between">
             <div className="form-check">
               <input className="form-check-input" type="checkbox" id="recordarme" />
@@ -127,7 +105,6 @@ export default function LoginPage() {
               ¿Olvidaste tu contraseña?
             </button>
           </div>
-
           <button
             className="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2 fw-semibold"
             type="submit"
@@ -138,7 +115,6 @@ export default function LoginPage() {
           </button>
         </form>
       </AuthShell>
-
       {isResetModalOpen && (
         <ResetPasswordModal
           defaultEmail={email.trim()}
@@ -149,4 +125,3 @@ export default function LoginPage() {
     </>
   )
 }
-
