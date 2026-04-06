@@ -130,21 +130,31 @@ body {
 
 .wallets-list,
 .wallets-list .list-group-item {
-  overflow: visible;
+  overflow: visible !important;
 }
 
 .wallet-actions-menu {
   min-width: 10rem;
+  width: 10rem;
+  left: auto;
+  right: 0;
+  top: calc(100% + 0.25rem);
+  margin-top: 0;
   z-index: 1100;
 }
 
 .budgets-list,
 .budgets-list .list-group-item {
-  overflow: visible;
+  overflow: visible !important;
 }
 
 .budget-actions-menu {
   min-width: 10rem;
+  width: 10rem;
+  left: auto;
+  right: 0;
+  top: calc(100% + 0.25rem);
+  margin-top: 0;
   z-index: 1100;
 }
 

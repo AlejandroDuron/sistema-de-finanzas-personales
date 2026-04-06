@@ -40,6 +40,7 @@ export default function CarteraList({
           cartera={cartera}
           isMenuOpen={openMenuId === cartera.id}
           onToggleMenu={() => toggleMenu(cartera.id)}
+          onCloseMenu={closeMenu}
           onEdit={() => { closeMenu(); onEdit(cartera) }}
           onDelete={() => { closeMenu(); onDelete(cartera) }}
         />
