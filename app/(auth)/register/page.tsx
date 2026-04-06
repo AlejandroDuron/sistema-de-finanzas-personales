@@ -2,18 +2,17 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { AuthAlert, AuthFormField, AuthPasswordField } from '@/src/auth/autenticacion/components/AuthForm'
 import AuthShell from '@/src/auth/autenticacion/components/AuthShell'
 import { registerAction } from '@/src/auth/autenticacion/auth.actions'
 
 export default function CrearCuenta() {
-  const router = useRouter()
   const [name, setName] = useState<string>('')
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [confirmPassword, setConfirmPassword] = useState<string>('')
   const [error, setError] = useState<string>('')
+  const [success, setSuccess] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
@@ -22,20 +21,16 @@ export default function CrearCuenta() {
 
   const handleSubmit = async (formData: FormData): Promise<void> => {
     setError('')
+    setSuccess('')
     setIsLoading(true)
-
     try {
       const result = await registerAction(formData)
-
       if (!result.success) {
         setError(result.message || 'No se pudo crear la cuenta.')
         return
       }
-
-      const targetEmail = result.user?.email || email.trim().toLowerCase()
-      const targetMessage = encodeURIComponent(result.message || 'Cuenta creada correctamente. Ahora inicia sesión con tu correo y contraseña.')
-      router.push(`/login?email=${encodeURIComponent(targetEmail)}&success=${targetMessage}`)
-    } catch (error) {
+      setSuccess(result.message || 'Cuenta creada correctamente. Ahora inicia sesión.')
+    } catch {
       setError('No se pudo crear la cuenta.')
     } finally {
       setIsLoading(false)
@@ -56,7 +51,7 @@ export default function CrearCuenta() {
         </p>
       )}
     >
-      <form className="d-grid gap-3" action={handleSubmit}>
+      <form className="d-grid gap-3" onSubmit={(e) => { e.preventDefault(); handleSubmit(new FormData(e.currentTarget)) }}>
         <AuthFormField
           autoComplete="name"
           autoFocus
@@ -69,7 +64,6 @@ export default function CrearCuenta() {
           value={name}
           onChange={setName}
         />
-
         <AuthFormField
           autoComplete="email"
           icon="mail"
@@ -82,7 +76,6 @@ export default function CrearCuenta() {
           value={email}
           onChange={setEmail}
         />
-
         <AuthPasswordField
           autoComplete="new-password"
           id="register-password"
@@ -93,7 +86,6 @@ export default function CrearCuenta() {
           value={password}
           onChange={setPassword}
         />
-
         <AuthPasswordField
           autoComplete="new-password"
           id="register-confirm-password"
@@ -104,9 +96,8 @@ export default function CrearCuenta() {
           value={confirmPassword}
           onChange={setConfirmPassword}
         />
-
         <AuthAlert message={error} />
-
+        <AuthAlert message={success} variant="success" />
         <button
           className="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2 fw-semibold"
           type="submit"
@@ -119,4 +110,3 @@ export default function CrearCuenta() {
     </AuthShell>
   )
 }
-
