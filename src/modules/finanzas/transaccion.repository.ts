@@ -37,6 +37,17 @@ export async function findAllCategorias(): Promise<{ id: string; nombre: string 
   return data ?? []
 }
 
+export async function findAllPresupuestos(userId: string): Promise<{ id: string; nombre: string }[]> {
+  const supabase = createBackendSupabaseClient()
+  const { data, error } = await supabase
+    .from('presupuestos')
+    .select('id, nombre')
+    .eq('user_id', userId)
+    .order('nombre', { ascending: true })
+  if (error) throw new Error(error.message)
+  return data ?? []
+}
+
 export async function findById(id: string): Promise<Transaccion | null> {
   const supabase = createBackendSupabaseClient()
   const { data, error } = await supabase

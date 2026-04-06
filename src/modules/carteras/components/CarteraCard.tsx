@@ -38,21 +38,27 @@ export default function CarteraCard({
         </div>
 
         {/* Barra de progreso */}
-        <div className="w-100 w-lg-50">
-          <div className="d-flex justify-content-between small mb-2">
+        {cartera.goal ? (
+          <div className="w-100 w-lg-50">
+            <div className="d-flex justify-content-between small mb-2">
+              <span className="fw-semibold">${cartera.balance.toLocaleString()}.00</span>
+              <span className="text-secondary">Meta: ${cartera.goal.toLocaleString()}.00</span>
+            </div>
+            <div
+              className="progress"
+              role="progressbar"
+              aria-valuenow={percent}
+              aria-valuemin={0}
+              aria-valuemax={100}
+            >
+              <div className="progress-bar bg-primary" style={{ width: `${percent}%` }} />
+            </div>
+          </div>
+        ) : (
+          <div className="w-100 w-lg-50">
             <span className="fw-semibold">${cartera.balance.toLocaleString()}.00</span>
-            <span className="text-secondary">Meta: ${cartera.goal.toLocaleString()}.00</span>
           </div>
-          <div
-            className="progress"
-            role="progressbar"
-            aria-valuenow={percent}
-            aria-valuemin={0}
-            aria-valuemax={100}
-          >
-            <div className="progress-bar bg-primary" style={{ width: `${percent}%` }} />
-          </div>
-        </div>
+        )}
 
         {/* Menú acciones */}
         <div className="position-relative ms-lg-auto">

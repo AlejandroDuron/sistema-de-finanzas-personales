@@ -45,6 +45,17 @@ export async function listarCategoriasAction(): Promise<ServiceResult<{ id: stri
   }
 }
 
+export async function listarPresupuestosAction(): Promise<ServiceResult<{ id: string; nombre: string }[]>> {
+  try {
+    const userId = await getUserId()
+    const { findAllPresupuestos } = await import('./transaccion.repository')
+    const data = await findAllPresupuestos(userId)
+    return { ok: true, data }
+  } catch {
+    return { ok: false, message: 'No se pudieron cargar los presupuestos' }
+  }
+}
+
 export async function crearTransaccionAction(
   input: CreateTransaccionInput
 ): Promise<ServiceResult<Transaccion>> {

@@ -8,6 +8,7 @@ interface TransaccionFormModalProps {
   form: TransaccionFormState
   carteras: CarteraOption[]
   categorias: { id: string; nombre: string }[]
+  presupuestos: { id: string; nombre: string }[]
   mode?: 'create' | 'edit'
   onFieldChange: <K extends keyof TransaccionFormState>(field: K, value: TransaccionFormState[K]) => void
   onSubmit: (e: FormEvent<HTMLFormElement>) => void
@@ -18,6 +19,7 @@ export default function TransaccionFormModal({
   form,
   carteras,
   categorias,
+  presupuestos,
   mode = 'create',
   onFieldChange,
   onSubmit,
@@ -121,7 +123,7 @@ export default function TransaccionFormModal({
                   </div>
                 </div>
 
-                {/* Cuenta */}
+                {/* Cartera */}
                 <div>
                   <label className="form-label fw-semibold">Cartera</label>
                   <select
@@ -133,13 +135,30 @@ export default function TransaccionFormModal({
                     required
                   >
                     <option value="">Sin cartera</option>
-                      {carteras.map((c) => (
-                        <option key={c.id} value={c.id}>{c.name}</option>
-                      ))}
+                    {carteras.map((c) => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
                   </select>
                 </div>
 
-                {/* Categoría */}
+                {/* Presupuesto — solo para gastos */}
+                {form.tipo === 'gasto' && (
+                  <div>
+                    <label className="form-label fw-semibold">Presupuesto <span className="text-secondary fw-normal">(opcional)</span></label>
+                    <select
+                      className="form-select"
+                      value={form.presupuesto_id}
+                      onChange={(e) => onFieldChange('presupuesto_id', e.target.value)}
+                    >
+                      <option value="">Sin presupuesto</option>
+                      {presupuestos.map((p) => (
+                        <option key={p.id} value={p.id}>{p.nombre}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* Categoria */}
                 <div>
                   <label className="form-label fw-semibold">Categoría</label>
                   <select

@@ -12,12 +12,13 @@ import TransaccionDeleteModal from '@/src/modules/finanzas/components/Transaccio
 import {createEmptyForm, formFromTransaccion } from '@/src/modules/finanzas/transaccion.schema'
 import type {Transaccion, TransaccionFormState} from '@/src/modules/finanzas/transaccion.schema'
 import type { CarteraOption } from '@/src/modules/carteras/cartera.schema'
-import { listarCategoriasAction } from '@/src/modules/finanzas/transaccion.actions'
+import { listarCategoriasAction, listarPresupuestosAction } from '@/src/modules/finanzas/transaccion.actions'
 
 export default function FinanzasPage() {
   const { transacciones, filtradas, isLoading, crear, actualizar, eliminar } = useTransacciones()
   const [carteras, setCarteras] = useState<CarteraOption[]>([])
   const [categorias, setCategorias] = useState<{ id: string; nombre: string }[]>([])
+  const [presupuestos, setPresupuestos] = useState<{ id: string; nombre: string }[]>([])
 
   useEffect(() => {
     listarCarterasAction().then((result) => {
@@ -30,6 +31,12 @@ export default function FinanzasPage() {
   useEffect(() => {
     listarCategoriasAction().then((result) => {
       if (result.ok) setCategorias(result.data)
+    })
+  }, [])
+
+  useEffect(() => {
+    listarPresupuestosAction().then((result) => {
+      if (result.ok) setPresupuestos(result.data)
     })
   }, [])
 
@@ -133,6 +140,7 @@ export default function FinanzasPage() {
           form={form}
           carteras={carteras}
           categorias={categorias} 
+          presupuestos={presupuestos}
           mode={transaccionToEdit ? 'edit' : 'create'}
           onFieldChange={handleFieldChange}
           onSubmit={handleSubmit}
