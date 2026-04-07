@@ -33,7 +33,7 @@ export default function PresupuestoList({
   }
 
   return (
-    <div className="list-group shadow-sm">
+    <div className="list-group shadow-sm budgets-list">
       {presupuestos.map((p) => (
         <PresupuestoCard
           key={p.id}
