@@ -49,7 +49,8 @@ export async function actualizarCarteraAction(
   input: Partial<UpdateCarteraInput>
 ): Promise<ServiceResult<Cartera>> {
   try {
-    const result = await carteraService.actualizar(id, input)
+    const userId = await getUserId()
+    const result = await carteraService.actualizar(id, userId, input)
     if (result.ok) revalidatePath('/carteras')
     return result
   } catch {
