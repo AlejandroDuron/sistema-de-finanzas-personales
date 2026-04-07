@@ -20,6 +20,22 @@ export interface AuthActionResult {
   user?: AuthUser
 }
 
+const getAppBaseUrl = (): string => {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL
+  if (configured) {
+    return configured.replace(/\/$/, '')
+  }
+
+  const vercelUrl = process.env.VERCEL_URL
+  if (vercelUrl) {
+    return `https://${vercelUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')}`
+  }
+
+  return 'http://localhost:3000'
+}
+
+const getAuthRedirectUrl = (): string => `${getAppBaseUrl()}/login`
+
 const toSpanishAuthMessage = (message?: string): string => {
   if (!message) {
     return 'No se pudo completar la operación de autenticación.'
@@ -98,7 +114,9 @@ export async function requestPasswordResetAction(formData: FormData): Promise<Au
 
   try {
     const supabase = createSupabaseServerAuthClient()
-    const { error } = await supabase.auth.resetPasswordForEmail(email)
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: getAuthRedirectUrl()
+    })
 
     if (error) {
       return { success: false, message: toSpanishAuthMessage(error.message) || 'No se pudo procesar la solicitud.' }
@@ -137,6 +155,7 @@ export async function registerAction(formData: FormData): Promise<AuthActionResu
       email,
       password,
       options: {
+        emailRedirectTo: getAuthRedirectUrl(),
         data: {
           full_name: name
         }
