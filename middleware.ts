@@ -28,20 +28,33 @@ export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get(AUTH_ACCESS_TOKEN_COOKIE)?.value
   const refreshToken = request.cookies.get(AUTH_REFRESH_TOKEN_COOKIE)?.value
 
-  let isValidSession = accessToken ? await verifyAccessToken(accessToken) : false
+  let isValidSession = false
   let cookiesToSet: { access: string; refresh: string; expiresIn: number } | null = null
 
-  if (!isValidSession && refreshToken) {
-    const supabase = createSupabaseServerAuthClient()
-    const { data, error } = await supabase.auth.refreshSession({ refresh_token: refreshToken })
+  if (accessToken) {
+    try {
+      isValidSession = await verifyAccessToken(accessToken)
+    } catch (error) {
+      console.error('[middleware] No se pudo verificar el access token.', error)
+      isValidSession = false
+    }
+  }
 
-    if (data.session && !error) {
-      isValidSession = true
-      cookiesToSet = {
-        access: data.session.access_token,
-        refresh: data.session.refresh_token,
-        expiresIn: data.session.expires_in
+  if (!isValidSession && refreshToken) {
+    try {
+      const supabase = createSupabaseServerAuthClient()
+      const { data, error } = await supabase.auth.refreshSession({ refresh_token: refreshToken })
+
+      if (data.session && !error) {
+        isValidSession = true
+        cookiesToSet = {
+          access: data.session.access_token,
+          refresh: data.session.refresh_token,
+          expiresIn: data.session.expires_in
+        }
       }
+    } catch (error) {
+      console.error('[middleware] No se pudo refrescar la sesion.', error)
     }
   }
 

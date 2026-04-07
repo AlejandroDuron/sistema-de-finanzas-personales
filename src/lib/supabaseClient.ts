@@ -79,4 +79,4 @@ export const verifyAccessToken = async (accessToken: string): Promise<boolean> =
   return Boolean(data.user && !error)
 }
 
-export const supabase = createBackendSupabaseClient()
+export const getSupabase = () => createBackendSupabaseClient()
