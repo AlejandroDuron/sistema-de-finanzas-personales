@@ -30,35 +30,6 @@ export default function TransaccionFila({
   // Busca el nombre de la cartera
   const carteraNombre = carteras.find(c => c.id === transaccion.cartera_id)?.nombre ?? 'Sin cartera'
 
-  useEffect(() => {
-    if (!isMenuOpen) {
-      return
-    }
-
-    const handlePointerDown = (event: MouseEvent | TouchEvent) => {
-      const target = event.target as Node | null
-      if (target && !actionsRef.current?.contains(target)) {
-        onCloseMenu()
-      }
-    }
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onCloseMenu()
-      }
-    }
-
-    document.addEventListener('mousedown', handlePointerDown)
-    document.addEventListener('touchstart', handlePointerDown)
-    document.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.removeEventListener('mousedown', handlePointerDown)
-      document.removeEventListener('touchstart', handlePointerDown)
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [isMenuOpen, onCloseMenu])
-
   return (
     <tr>
       <td className="small text-secondary">{formatTransaccionDate(transaccion.fecha)}</td>
@@ -78,7 +49,7 @@ export default function TransaccionFila({
         {isPositive ? '+' : '-'}${Math.abs(transaccion.monto).toFixed(2)}
       </td>
       <td className="tx-actions-col">
-        <div className="transaction-actions-wrapper" ref={actionsRef}>
+        <div className="transaction-actions-wrapper" ref={actionsRef} style={{ position: 'relative' }}>
           <button
             className="btn btn-link text-secondary p-0 d-inline-flex align-items-center justify-content-center tx-actions-trigger"
             type="button"
@@ -88,7 +59,13 @@ export default function TransaccionFila({
             <span className="material-symbols-outlined">more_vert</span>
           </button>
           {isMenuOpen && (
-            <div className="dropdown-menu transaction-actions-menu show">
+            <div className="dropdown-menu show"
+            style={{
+              position: 'absolute',
+              top: '100%',
+              right: 0,
+              zIndex: 1000
+            }}>
               <button className="dropdown-item" type="button" onClick={onEdit}>
                 Editar
               </button>

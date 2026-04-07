@@ -22,35 +22,6 @@ export default function CarteraCard({
 }: CarteraCardProps) {
   const actionsRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    if (!isMenuOpen) {
-      return
-    }
-
-    const handlePointerDown = (event: MouseEvent | TouchEvent) => {
-      const target = event.target as Node | null
-      if (target && !actionsRef.current?.contains(target)) {
-        onCloseMenu()
-      }
-    }
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onCloseMenu()
-      }
-    }
-
-    document.addEventListener('mousedown', handlePointerDown)
-    document.addEventListener('touchstart', handlePointerDown)
-    document.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.removeEventListener('mousedown', handlePointerDown)
-      document.removeEventListener('touchstart', handlePointerDown)
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [isMenuOpen, onCloseMenu])
-
   const percent = Math.min(
     100,
     Math.max(0, Math.round((cartera.balance_inicial / cartera.objetivo_cantidad) * 100))
