@@ -2,6 +2,7 @@
 
 import { useRef } from 'react'
 import type { CarteraSummary } from '../cartera.schema'
+import { formatMoney } from '@/src/shared/types/common'
 
 interface CarteraCardProps {
   cartera: CarteraSummary
@@ -18,9 +19,6 @@ export default function CarteraCard({
   onEdit,
   onDelete
 }: CarteraCardProps) {
-
-  const formatMoney = (value: number) =>
-    value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
   const percent = Math.min(
     100,

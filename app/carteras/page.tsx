@@ -7,9 +7,7 @@ import CarteraList from '@/src/modules/carteras/components/CarteraList'
 import CarteraForm from '@/src/modules/carteras/components/CarteraForm'
 import CarteraDeleteModal from '@/src/modules/carteras/components/CarteraDeleteModal'
 import type { CarteraSummary, CreateCarteraInput} from '@/src/modules/carteras/cartera.schema'
-
-const formatMoney = (value: number) =>
-  value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+import { formatMoney } from '@/src/shared/types/common'
 
 export default function CarterasPage() {
   const { carteras, isLoading, crear, actualizar, eliminar } = useCarteras() //Logica

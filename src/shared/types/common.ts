@@ -14,3 +14,10 @@ export interface ServiceFailure {
 }
 
 export type ServiceResult<T> = ServiceSuccess<T> | ServiceFailure
+
+export function formatMoney(value: number): string {
+  return value.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })
+}
