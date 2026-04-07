@@ -19,6 +19,9 @@ export default function CarteraCard({
   onDelete
 }: CarteraCardProps) {
 
+  const formatMoney = (value: number) =>
+    value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+
   const percent = Math.min(
     100,
     Math.max(0, Math.round((cartera.balance_inicial / cartera.objetivo_cantidad) * 100))
@@ -43,8 +46,8 @@ export default function CarteraCard({
         {cartera.objetivo_cantidad ? (
           <div className="w-100 w-lg-50">
             <div className="d-flex justify-content-between small mb-2">
-              <span className="fw-semibold">${cartera.balance_inicial.toLocaleString()}.00</span>
-              <span className="text-secondary">Meta: ${cartera.objetivo_cantidad.toLocaleString()}.00</span>
+              <span className="fw-semibold">${formatMoney(cartera.balance_inicial)}</span>
+              <span className="text-secondary">Meta: ${formatMoney(cartera.objetivo_cantidad)}</span>
             </div>
             <div
               className="progress"
@@ -58,7 +61,7 @@ export default function CarteraCard({
           </div>
         ) : (
           <div className="w-100 w-lg-50">
-            <span className="fw-semibold">${cartera.balance_inicial.toLocaleString()}.00</span>
+            <span className="fw-semibold">${formatMoney(cartera.balance_inicial)}</span>
           </div>
         )}
 

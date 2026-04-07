@@ -8,6 +8,9 @@ import CarteraForm from '@/src/modules/carteras/components/CarteraForm'
 import CarteraDeleteModal from '@/src/modules/carteras/components/CarteraDeleteModal'
 import type { CarteraSummary, CreateCarteraInput} from '@/src/modules/carteras/cartera.schema'
 
+const formatMoney = (value: number) =>
+  value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+
 export default function CarterasPage() {
   const { carteras, isLoading, crear, actualizar, eliminar } = useCarteras() //Logica
 
@@ -85,7 +88,7 @@ export default function CarterasPage() {
             <div className="position-relative z-1">
               <p className="small fw-medium mb-1">Balance Total</p>
               <h3 className="display-6 fw-bold mb-0">
-                ${totalBalance.toLocaleString()}.00
+                ${formatMoney(totalBalance)}
               </h3>
             </div>
             <div className="wallet-hero-gradient position-absolute top-0 end-0 h-100" />
